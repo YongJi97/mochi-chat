@@ -1,9 +1,11 @@
 import React, {useEffect, useState, useRef} from 'react'
-import {Avatar, IconButton} from "@material-ui/core"
+import {Avatar, IconButton, Button, Input} from "@material-ui/core"
 import SearchOutlined from "@material-ui/icons/SearchOutlined"
 import AttachFile from "@material-ui/icons/AttachFile"
 import MoreVertIcon from "@material-ui/icons/MoreVert"
 import InsertEmoticonIcon from "@material-ui/icons/InsertEmoticon"
+import SendIcon from "@material-ui/icons/Send"
+
 import MicIcon from "@material-ui/icons/Mic"
 import * as Scroll from 'react-scroll';
 
@@ -176,9 +178,13 @@ function Chat() {
 
             <div className="chat_footer">
                 <InsertEmoticonIcon />
-                <form>
-                    <input type="text" value={input} onChange={event => {setInput(event.target.value)}} />
-                    <button onClick={sendMessage} type="submit" placeholder="Enter a message">Send</button>
+                <form autoComplete="off">
+                    <Input className="input" type="text" value={input} onChange={event => {setInput(event.target.value)} } placeholder="Enter a message"></Input>
+                    <IconButton onClick={sendMessage} aria-label="send" type="submit">
+                        <SendIcon />
+                    </IconButton>
+
+                    
                 </form>
                 <MicIcon />
             </div>
