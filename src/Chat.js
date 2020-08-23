@@ -29,9 +29,23 @@ function Chat() {
     const [{user}, dispatch] = useStateValue();
     const [rickRoll, setRickRoll] = useState(false);
     const [rickRollUrl, setRickRollUrl] = useState("");
+    const [backgroundImage, setBackgroundImage] = useState(0);
+    const [imageUrl, setImageUrl] = useState("");
 
     const divRef = useRef(null);
+
+    const arrImages = [
+        "https://3.bp.blogspot.com/-yCWzhevjj7k/VvG3M43KLUI/AAAAAAACFTQ/b1SUDzztqJ8tQNVMi-uZPw0GtPljPuq5g/s1600/chickie%2Bmochi.jpg",
+        "https://i.pinimg.com/originals/f7/9b/5e/f79b5e3af8c741bbc1dafdc01a01e9c2.jpg",
+        "https://i.pinimg.com/originals/79/5c/ab/795cabc4647f73b365e2e6eabd0f34dc.png",
+        "https://wallpapercave.com/wp/cqhO8rQ.jpg",
+        "https://png.pngtree.com/thumb_back/fw800/background/20190222/ourmid/pngtree-small-clear-and-beautiful-literary-background-backgroundsmall-clear-backgroundgreen-image_62321.jpg",
+        "https://wallpapercave.com/wp/wp4410714.jpg"
+    ]
     
+    useEffect(() => {
+        setImageUrl(arrImages[backgroundImage])
+    }, [backgroundImage])
 
     useEffect(() => {
         if(roomId){
@@ -70,12 +84,26 @@ function Chat() {
 
     }, [rickRoll])
 
+    useEffect(() => {
+        divRef.current.scrollIntoView({ behavior: 'smooth' });
+    }, [messages])
+
+    const toggleBackgroundImage = () => {
+        if(backgroundImage >= 5){
+            setBackgroundImage(0);
+        }else {
+            setBackgroundImage(backgroundImage+1);
+        }
+        console.log(backgroundImage)
+    }
+
     const displayVideo = () => {
 
         if(rickRoll) {
             return <ReactPlayer url={rickRollUrl}  width="100%" height="100%" controls={true} playing={true} />
         }
     }
+    
 
     const sendMessage = (event) => {
         divRef.current.scrollIntoView({ behavior: 'smooth' });
@@ -87,9 +115,11 @@ function Chat() {
                 message: input,
                 name: user.displayName,
                 timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                profilePic: user.photoURL,
             })
         }
     }
+    
 
     return (
         <div className="chat">
@@ -105,7 +135,7 @@ function Chat() {
 
                 <div className="chat_headerRight">
                     <IconButton>
-                        <SearchOutlined />
+                        <SearchOutlined onClick={() => toggleBackgroundImage()}/>
                     </IconButton>
                     <IconButton>
                         <AttachFile onClick={() => {setRickRoll(!rickRoll)}}/>
@@ -117,12 +147,19 @@ function Chat() {
 
             </div>
 
-            <div className="chat_body" >
+            <div className="chat_body" style={{backgroundImage : `url(${imageUrl})`}}>
+                {console.log(messages)}
+                
 
                 {messages.map(message => (
-                <p ref={divRef} className={`chat_message ${message.name === user.displayName && 'chat_receiver'}`}>
-                    <span className="chat_name">{message.name}</span>
-                    {message.message}
+                <p className={`chat_message ${message.name === user.displayName && 'chat_receiver'}`}>
+                    <div className="chat_message_div">
+                        <span className="profilePic"> <Avatar src={message.profilePic}/></span>
+                        <span className="chat_name">{message.name}</span>
+                        {message.message}
+                    </div>
+
+                    
                     <span className="chat_timestamp">
                         {new Date(message.timestamp?.toDate()).toLocaleString()}
                     </span>
@@ -132,8 +169,7 @@ function Chat() {
                 {displayVideo()}
 
                 
-
-                <div ref={divRef}></div>
+                <div className="bottomDiv" ref={divRef}></div>
 
 
             </div>
