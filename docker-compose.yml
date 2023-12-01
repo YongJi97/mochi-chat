@@ -2,7 +2,7 @@ version: "0.1"
 services:
   app:
     container_name: mochi-chat
-    image: mochi-chat-image
+    image: yongjichen/mochi-chat-image
     build:
       context: .
     ports:
